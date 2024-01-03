@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm.session import Session
 from datetime import date
 
-from ..app import auth, models, database, utils, schemas
+from app import auth, models, database, utils, schemas
 
 router = APIRouter(tags=["User Operations"])
 

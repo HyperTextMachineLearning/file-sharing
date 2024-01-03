@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 
-from ..app.utils import username_is_valid, username_invalid_exception
-from ..app import auth, models, schemas, security
-from ..app.database import get_db
+from app.utils import username_is_valid, username_invalid_exception
+from app import auth, models, schemas, security
+from app.database import get_db
 
 router = APIRouter(tags=["Registration & Login"])
 
