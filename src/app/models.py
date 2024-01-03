@@ -1,20 +1,22 @@
-from sqlalchemy import Column
-from sqlalchemy import Integer, String, LargeBinary, Date, Boolean
+from sqlalchemy import Column, Integer, String, LargeBinary, Date, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    email = Column(String, primary_key=True, index=True)
+    username = Column(String, primary_key=True, index=True)
     hashed_password = Column(String)
+    children = relationship("File", back_populates="parent")
 
 class File(Base):
     __tablename__ = "files"
 
-    code = Column(Integer, primary_key=True, index=True)
+    code = Column(Integer, primary_key=True, index=True, autoincrement=True)
     file_name = Column(String)
     expiry_date = Column(Date, index=True)
-    expired = Column(Boolean)
-    uploader = Column()
+    availability = Column(Integer, default=0) # 0 - Not Expired, 1 - Auto-Expired, 2 - Deleted by User
+    uploader = Column(String, ForeignKey("users.username"))
     file = Column(LargeBinary, nullable=True)
+    parent = relationship("User", back_populates="children")

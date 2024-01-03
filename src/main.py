@@ -1,34 +1,13 @@
 from fastapi import FastAPI
 from fastapi.param_functions import Body, Path
-from app.schemas import AuthCredentials
+
+from app import models, database
+from routes import authentication, operations
+
 app = FastAPI()
 
-@app.post("/register")
-async def register(): 
-    ...
+models.Base.metadata.create_all(bind=database.engine)
 
+app.include_router(authentication.router)
+app.include_router(operations.router)
 
-@app.post("/login")
-async def login(): 
-    ...
-
-
-@app.post("/upload")
-async def upload(): 
-    ...
-    # return code
-
-    
-@app.get("/download/{code}")
-async def download(code: int): 
-    ...
-
-
-@app.delete("/delete/{code}")
-async def deleteFile(code: int = Path(..., gt=1000, le=9999)): 
-    ...
-
-
-@app.get("/list-auto-deleted-files/")
-async def listAutoDeletedFiles(): 
-    ...
