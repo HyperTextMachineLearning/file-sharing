@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from fastapi.param_functions import Body, Path
 
 from app import models, database
 from routes import authentication, operations
