@@ -5,7 +5,7 @@ DATABASE_URL = "postgresql://myuser:password@localhost/file_sharing"
 
 engine = create_engine(DATABASE_URL)
 
-SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, engine=engine)
+SessionLocal = orm.sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
