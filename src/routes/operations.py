@@ -12,7 +12,7 @@ router = APIRouter(tags=["User Operations"])
 @router.post("/upload")
 async def upload(
     file: UploadFile,
-    date: date = Form(gt=date.today()),
+    date: date = Form(),
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
     ):
