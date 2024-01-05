@@ -92,6 +92,7 @@ async def listAutoDeletedFiles(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
     ): 
-    files = db.query(models.File).filter(models.File.availability == utils.AUTO_DELETED).all()
+    files = db.query(models.File).filter(models.File.availability == utils.AUTO_DELETED
+                                    and models.File.uploader == current_user.username).all()
     return files
     
