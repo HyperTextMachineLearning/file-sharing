@@ -1,5 +1,6 @@
+import io
 from typing import List
-from fastapi import APIRouter, Path, Depends, Form, UploadFile, status
+from fastapi import APIRouter, Path, Depends, Form, UploadFile, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
 from fastapi.responses import FileResponse
 from sqlalchemy.orm.session import Session
@@ -12,16 +13,22 @@ router = APIRouter(tags=["User Operations"])
 @router.post("/upload")
 async def upload(
     file: UploadFile,
-    date: date = Form(),
+    year: int = Form(ge=date.today().year, lt=2124),
+    month: int = Form(ge=0, le=12),
+    day: int = Form(ge=1, le=31),
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
     ):
-
+    try:
+        recvd_date = date(year, month, day)
+    except ValueError as e:
+        return {"message": "Please provide a valid date"}
+    if recvd_date <= date.today(): return {"message": "Please provide a future date"}
     file_to_upload = models.File(
         file_name=file.filename,
-        expiry_date=date,
+        expiry_date=recvd_date,
         uploader=current_user.username,
-        file=file.file,
+        file=file.file.read(),
     )
 
     db.add(file_to_upload)
@@ -30,21 +37,24 @@ async def upload(
 
     return { "result": "File Uploaded Successfully", "code": file_to_upload.code}
 
-    
+
 @router.get("/download/{code}")
 async def download(
-    code: int = Path(..., gt=1000, le=9999),
+    background_tasks: BackgroundTasks,
+    code: int = Path(..., ),
     current_user: models.User = Depends(auth.get_current_user),
-    db: Session = Depends(database.get_db)
+    db: Session = Depends(database.get_db),
     ): 
     file_from_db = db.query(models.File).filter(models.File.code == code).first()
     utils.check_file_is_downloadable(file_from_db, db)
-    return FileResponse(file_from_db.file)
+    output_file_path = utils.create_downloadable_file(file_from_db=file_from_db)
+    background_tasks.add_task(utils.delete_residue_file, output_file_path)
+    return FileResponse(output_file_path, filename=file_from_db.file_name)
 
 
 @router.delete("/delete/{code}")
 async def deleteFile(
-    code: int = Path(..., gt=1000, le=9999),
+    code: int = Path(..., ),
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
     ): 
