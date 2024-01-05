@@ -46,6 +46,7 @@ async def download(
     db: Session = Depends(database.get_db),
     ): 
     file_from_db = db.query(models.File).filter(models.File.code == code).first()
+    utils.check_file_existence(file_from_db)
     utils.check_file_is_downloadable(file_from_db, db)
     output_file_path = utils.create_downloadable_file(file_from_db=file_from_db)
     background_tasks.add_task(utils.delete_residue_file, output_file_path)
@@ -59,11 +60,7 @@ async def deleteFile(
     db: Session = Depends(database.get_db)
     ): 
     file_record = db.query(models.File).filter(models.File.code == code).first()
-    if file_record is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="File not found"
-        )
+    utils.check_file_existence(file_record)
     if (file_record.availability == utils.AVAILABLE):
         if (current_user.username == file_record.uploader):
             file_record = utils.delete_file(file_record, db, utils.DELETED_BY_USER)

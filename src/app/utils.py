@@ -70,3 +70,12 @@ def create_downloadable_file(file_from_db: models.File):
     with open(output_file_path, "wb") as output_file:
         output_file.write(file_from_db.file)
     return output_file_path
+
+
+def check_file_existence(file_record: models.File):
+    """Checks whether a file record exists or not. If it does not exist raises an HTTPException"""
+    if file_record is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="File not found"
+        )
