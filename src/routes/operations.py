@@ -1,4 +1,3 @@
-import io
 from typing import List
 from fastapi import APIRouter, Path, Depends, Form, UploadFile, status, BackgroundTasks
 from fastapi.exceptions import HTTPException
@@ -21,7 +20,7 @@ async def upload(
     ):
     recvd_date = utils.validate_date(year, month, day)
     if recvd_date <= date.today(): return {"message": "Please provide a future date"}
-    
+
     file_to_upload = models.File(
         file_name=file.filename,
         expiry_date=recvd_date,
