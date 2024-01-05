@@ -66,7 +66,7 @@ def delete_residue_file(file_path: str):
 
 def create_downloadable_file(file_from_db: models.File):
     """Creates a downloadable file and returns the path to it"""
-    output_file_path = f"{os.getcwd()}/app/response_files/{file_from_db.file_name}"
+    output_file_path = os.path.join(os.getcwd(), "app", "response_files", file_from_db.file_name)
     with open(output_file_path, "wb") as output_file:
         output_file.write(file_from_db.file)
     return output_file_path
