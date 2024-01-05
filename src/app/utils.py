@@ -79,3 +79,10 @@ def check_file_existence(file_record: models.File):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="File not found"
         )
+
+
+def validate_date(year: int, month: int, day: int):
+    try:
+        recvd_date = date(year, month, day)
+    except ValueError as e:
+        return {"message": "Please provide a valid date"}

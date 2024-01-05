@@ -14,15 +14,12 @@ router = APIRouter(tags=["User Operations"])
 async def upload(
     file: UploadFile,
     year: int = Form(ge=date.today().year, lt=2124),
-    month: int = Form(ge=0, le=12),
+    month: int = Form(ge=1, le=12),
     day: int = Form(ge=1, le=31),
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
     ):
-    try:
-        recvd_date = date(year, month, day)
-    except ValueError as e:
-        return {"message": "Please provide a valid date"}
+    recvd_date = utils.validate_date(year, month, day)
     if recvd_date <= date.today(): return {"message": "Please provide a future date"}
     file_to_upload = models.File(
         file_name=file.filename,
