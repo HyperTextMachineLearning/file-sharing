@@ -4,8 +4,8 @@ from fastapi import HTTPException, status
 import re
 from datetime import date
 import sqlalchemy
-
 from sqlalchemy.orm.session import Session
+import os
 
 from . import database, models
 
@@ -54,3 +54,19 @@ def check_file_is_downloadable(file: models.File, db: Session):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="File deleted by owner"
         )
+
+
+def delete_residue_file(file_path: str):
+    try:
+        os.remove(file_path)
+    except OSError as e:
+        # If it fails, inform the user.
+        print(f"Error: {e.filename} - {e.strerror}.")
+
+
+def create_downloadable_file(file_from_db: models.File):
+    """Creates a downloadable file and returns the path to it"""
+    output_file_path = f"{os.getcwd()}/app/response_files/{file_from_db.file_name}"
+    with open(output_file_path, "wb") as output_file:
+        output_file.write(file_from_db.file)
+    return output_file_path
