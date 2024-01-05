@@ -84,5 +84,9 @@ def check_file_existence(file_record: models.File):
 def validate_date(year: int, month: int, day: int):
     try:
         recvd_date = date(year, month, day)
+        return recvd_date
     except ValueError as e:
-        return {"message": "Please provide a valid date"}
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Please provide a valid date"
+        )
