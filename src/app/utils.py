@@ -30,8 +30,8 @@ def username_is_valid(username: str):
     return True if pattern.match(username) else False
 
 
-def delete_file(file: models.File, db: Session) -> models.File:
-    file.availability = AUTO_DELETED
+def delete_file(file: models.File, db: Session, delete_code: int) -> models.File:
+    file.availability = delete_code
     file.file = sqlalchemy.null()
     db.commit()
     db.refresh(file)
@@ -43,7 +43,7 @@ def check_file_is_downloadable(file: models.File, db: Session):
         if file.expiry_date > date.today():
             return
         else:
-            file = delete_file(file, db)
+            file = delete_file(file, db, AUTO_DELETED)
     if file.availability == AUTO_DELETED:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

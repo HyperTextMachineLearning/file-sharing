@@ -66,7 +66,7 @@ async def deleteFile(
         )
     if (file_record.availability == utils.AVAILABLE):
         if (current_user.username == file_record.uploader):
-            file_record = utils.delete_file(file_record, db)
+            file_record = utils.delete_file(file_record, db, utils.DELETED_BY_USER)
             return {"message": "File Deleted Successfully!"}
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
