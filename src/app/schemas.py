@@ -22,6 +22,7 @@ class Token(BaseModel):
     token_type: str
 
 class File(BaseModel):
+    code: int
     file_name: str
     class Config:
         orm_mode = True
