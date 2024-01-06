@@ -28,7 +28,8 @@ async def register(user_in: schemas.UserIn, db: Session = Depends(get_db)):
 @router.post("/login", response_model=schemas.Token)
 async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = auth.get_user(db, username=user_credentials.username)
-    password_matched: bool = security.pwd_context.verify(user_credentials.password, user.hashed_password)
+    if user is not None:   
+        password_matched: bool = security.pwd_context.verify(user_credentials.password, user.hashed_password)
     
     if not user or not password_matched:
         raise HTTPException(

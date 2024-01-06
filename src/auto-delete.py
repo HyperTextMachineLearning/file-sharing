@@ -11,7 +11,7 @@ from app import models, database, utils
 expired_files: List[models.File]
 db: Session = database.get_db()
 
-expired_files = db.query(models.File).filter(date.today() > models.File.expiry_date
+expired_files = db.query(models.File).filter(date.today() >= models.File.expiry_date
                                         and models.File.availability == utils.AVAILABLE).all()
 
 if len(expired_files) == 0: quit()
