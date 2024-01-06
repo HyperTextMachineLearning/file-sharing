@@ -1,4 +1,6 @@
 #!/home/byt3/Projects/file-sharing/venv/bin/python3
+# Replace {/home/byt3/Projects} with the directory you've cloned the project in
+
 from typing import List
 import sqlalchemy
 from sqlalchemy.orm import Session
